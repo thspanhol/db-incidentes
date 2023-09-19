@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import new_db from "./new-db";
-import { QuerySnapshot, addDoc, collection, onSnapshot, query } from "firebase/firestore";
+import {
+  QuerySnapshot,
+  addDoc,
+  collection,
+  onSnapshot,
+  query,
+} from "firebase/firestore";
 import { fireDB } from "./firebase";
 
 const testInc = {
@@ -33,32 +39,30 @@ console.log(now.getHours());
 
 function App() {
   const [DB, setDB] = useState(new_db);
-  const [fire, setFire] = useState(['teste1', 'teste2']);
+  const [fire, setFire] = useState(["teste1", "teste2"]);
 
   const criarIncidente = async () => {
     for (const incidente of DB) {
-      let newInc = {...incidente, }
-      newInc.descricao = "Descrição teste."
-      newInc.retorno = "Teste Teste Teste Teste Teste Teste Teste Teste"
-      await addDoc(collection(fireDB, 'incidentes'), newInc);
+      let newInc = { ...incidente };
+      newInc.descricao = "Descrição teste.";
+      newInc.retorno = "Teste Teste Teste Teste Teste Teste Teste Teste";
+      await addDoc(collection(fireDB, "incidentes"), newInc);
     }
-  }
+  };
 
   // Ler Incidentes
 
   useEffect(() => {
-    
-      const q = query(collection(fireDB, 'incidentes'))
+    const q = query(collection(fireDB, "incidentes"));
     const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
-      let incidentesArr = []
+      let incidentesArr = [];
       QuerySnapshot.forEach((doc) => {
-        incidentesArr.push({...doc.data(), id: doc.id})
-      })
-      setFire(incidentesArr)
-    })
-    return () => unsubscribe()
-  
-  }, [])
+        incidentesArr.push({ ...doc.data(), id: doc.id });
+      });
+      setFire(incidentesArr);
+    });
+    return () => unsubscribe();
+  }, []);
 
   console.log(fire);
 
