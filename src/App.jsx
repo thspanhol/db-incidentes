@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import new_db from "./new-db";
-import { QuerySnapshot, collection, onSnapshot, query } from "firebase/firestore";
+import { QuerySnapshot, addDoc, collection, onSnapshot, query } from "firebase/firestore";
 import { fireDB } from "./firebase";
 
 const testInc = {
@@ -35,11 +35,20 @@ function App() {
   const [DB, setDB] = useState(new_db);
   const [fire, setFire] = useState(['teste1', 'teste2']);
 
-  // Criar Incidente
+  const criarIncidente = async () => {
+    for (const incidente of DB) {
+      let newInc = {...incidente, }
+      newInc.descricao = "Descrição teste."
+      newInc.retorno = "Teste Teste Teste Teste Teste Teste Teste Teste"
+      await addDoc(collection(fireDB, 'incidentes'), newInc);
+    }
+  }
+
   // Ler Incidentes
 
   useEffect(() => {
-    const q = query(collection(fireDB, 'incidentes'))
+    
+      const q = query(collection(fireDB, 'incidentes'))
     const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
       let incidentesArr = []
       QuerySnapshot.forEach((doc) => {
@@ -48,6 +57,7 @@ function App() {
       setFire(incidentesArr)
     })
     return () => unsubscribe()
+  
   }, [])
 
   console.log(fire);
@@ -68,9 +78,11 @@ function App() {
         Teste TOK
       </button>
 
+      <button onClick={criarIncidente}>Adiciona Incidente</button>
+
       <button
         onClick={() => {
-          setDB([testInc, ...DB]);
+          setDB(testInc);
         }}
       >
         Adicionar Incidente
